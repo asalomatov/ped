@@ -1,8 +1,7 @@
 """Class and container for pedigree information, vcf, and bam file by sample"""
 
-from future import print_function
 import pandas as pd
-import re
+import re 
 import func
 
 class Ped:
@@ -23,25 +22,25 @@ class Ped:
 
     def addVcf(self, field='fam_id', file_pat='/mnt/ceph/asalomatov/SSC_Eichler/rerun/ssc%s/%s-JHC-vars.vcf.gz'):
         num_subst = len(re.findall('\%s', file_pat))
-        print('%s substitutions found' % num_subst)
+        print num_subst, ' substitutions found'
         if num_subst > 0:
             x = self.ped[field].apply(lambda f: func.checkFile(file_pat % ((f,) * num_subst)))
             self.ped['vcf'] = pd.Series(x, index=self.ped.index)
         else:
             self.ped['vcf'] = file_pat
 
-    def addBam(self, field='ind_id', file_pat='/mnt/ceph/asalomatov/SSC_Eichler/data_S3/%s*.bam'):
+    def addBam(self, field='ind_id', file_pat='/mnt/ceph/asalomatov/SSC_Eichler/data_S3/%s*.bam', num_subst=2):
         num_subst = len(re.findall('\%s', file_pat))
-        print('%s substitutions found' % num_subst)
+        print num_subst, ' substitutions found'
         if num_subst > 0:
             x = self.ped[field].apply(lambda f: func.listFiles(file_pat % ((f,) * num_subst)))
             self.ped['bam'] = pd.Series(x, index=self.ped.index)
         else:
             self.ped['bam'] = file_pat
 
-    def addBai(self, field='ind_id', file_pat='/mnt/ceph/asalomatov/SSC_Eichler/data_S3/%s*bam.bai'):
+    def addBai(self, field='ind_id', file_pat='/mnt/ceph/asalomatov/SSC_Eichler/data_S3/%s*bam.bai', num_subst=2):
         num_subst = len(re.findall('\%s', file_pat))
-        print('%s substitutions found' % num_subst)
+        print num_subst, ' substitutions found'
         if num_subst > 0:
             x = self.ped[field].apply(lambda f: func.listFiles(file_pat % ((f,) * num_subst)))
             self.ped['bai'] = pd.Series(x, index=self.ped.index)
@@ -50,12 +49,13 @@ class Ped:
 
     def addTestFile(self, field='ind_id', file_pat='/mnt/scratch/asalomatov/data/SSC/wes/feature_sets/fb/all_SNP/%s'):
         num_subst = len(re.findall('\%s', file_pat))
-        print('%s substitutions found' % num_subst)
+        print num_subst, ' substitutions found'
         if num_subst > 0:
             x = self.ped[field].apply(lambda f: func.listFiles(file_pat % ((f,) * num_subst)))
             self.ped['test'] = pd.Series(x, index=self.ped.index)
         else:
             self.ped['test'] = file_pat
+
 
     def getAllMembers(self, family_id):
         return self.ped['ind_id'][self.ped['fam_id'] == family_id].tolist()
@@ -74,6 +74,7 @@ class Ped:
     def getFather(self, family_id):
         res = self.ped['ind_id'][(self.ped['fam_id'] == family_id) & (self.ped['sex'] == 1) &  \
                 self.ped['fa_id'].isnull() & self.ped['mo_id'].isnull()]
+        print res
         if len(res.index) == 0: return None
         assert len(res) == 1
         return res.iloc[0]
