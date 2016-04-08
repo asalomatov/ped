@@ -1,0 +1,2 @@
+# ped
+pedigree file representation
