@@ -15,7 +15,7 @@ if __name__ == '__main__':
             'Environment :: Console',
             'Operating System :: OS Independent',
             'Intended Audience :: Science/Research',
-            'License :: MIT :: MIT', 
+            'License :: OSI Approved :: MIT License', 
             'Programming Language :: Python',
             'Topic :: Scientific/Engineering :: Bio-Informatics',
             ],
